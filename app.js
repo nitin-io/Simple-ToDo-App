@@ -5,47 +5,51 @@ const app = express();
 
 app.use(express.static(__dirname + "/public/"))
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded());
+
+let todoItems = [];
+let workTodo = [];
 
 
 const today = new Date();
 console.log(today);
 
-const countDay = (dayNum) => {
-	switch(dayNum) {
-	case 0:
-			return "Sunday"
-			break;
-	case 1:
-			return "Monday"
-			break;
-	case 2: 
-			return "Tuesday"
-			break;
-	case 3:
-			return "Wednesday"
-			break;
-	case 4:
-			return "Thursday"
-			break;
-	case 5:
-			return "Friday"
-			break;
-	case 6:
-			return "Saturday"
-			break;
-	default:
-			break;
-	}
+const options = {
+	weekday: 'long',
+	day: '2-digit',
+	month: 'short',
+	year: 'numeric'
 }
 
-const day = countDay(today.getDay());
-
+let day = today.toLocaleDateString('en-US', options);
 
 app.get("/", (req, res)=>{
-	res.render("index", {kindOfDay: day});
-
+	res.render("index", {listTitle: day, newTodoItems: todoItems});
 });
+
+app.get("/work", (req, res)=> {
+	res.render("index", {listTitle: "Work", newTodoItems: workTodo})
+});
+
+app.get("/about", (req,res)=>{
+	res.render("about.ejs")
+});
+
+app.post("/", (req, res)=>{
+	console.log(req.body);
+	item = req.body.todo;
+
+	if(req.body.list === 'Work'){
+		workTodo.push(item);
+		res.redirect('/work')
+	}else{
+		todoItems.push(item);
+		res.redirect("/")
+	}
+}); 
+
 
 app.listen(3000, ()=>{
 	console.log("Server is Running on Port: 3000");
 });
+

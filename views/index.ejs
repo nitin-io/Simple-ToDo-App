@@ -1,18 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>todolist-v1</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<%    if(kindOfDay === "Saturday" || kindOfDay === "Sunday"){ %>
-        <h1 style="color: green;">Today is <%= kindOfDay %>!</h1>
-<% }else{ %>
-        <h1 style="color: red;">Today is <%= kindOfDay %>!</h1>
-<%    } %>
+<%- include('header.ejs') -%>
+        <div class="box">
+                <h1 id='heading'><%= listTitle %></h1>
+        </div>
+        <div class="box">
+                <% for(let i = 0; i < newTodoItems.length; i++){ %>
+                        <div class="item">
+                                <input type="checkbox"><p> <%= newTodoItems[i] %> </p>
+                        </div>
+               <% } %>
+        
+        <form class="item" action="/" method="post">
+                <input type="text" name="todo" placeholder="New Item" autocomplete="off">
+                <button type="submit" name="list" value="<%= listTitle %>">+</button>
+        </form>
 
-</body>
-</html>
+        </div>
+<%- include('footer.ejs') -%>
