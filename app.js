@@ -1,15 +1,31 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
+const mongoose = require("mongoose");
 const app = express();
 
 app.use(express.static(__dirname + "/public/"))
 app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({extended: true}));
+mongoose.set('strictQuery', false);
+mongoose.connect('mongodb://127.0.0.1:27017/todoItemsDB');
 
-let todoItems = [];
-let workTodo = [];
+const itemSchema = {
+	todo: String
+};
 
+const Item = mongoose.model("Item", itemSchema);
+
+const item1 = new Item({
+	todo: "Welcome to your to do list"
+});
+
+const item2 = new Item({
+	todo: "You can start adding your to dos by clicking + button"
+});
+
+const item3 = new Item({
+	todo: "<-- You can delete todo by clicking this."
+});
 
 const today = new Date();
 console.log(today);
@@ -24,7 +40,28 @@ const options = {
 let day = today.toLocaleDateString('en-US', options);
 
 app.get("/", (req, res)=>{
-	res.render("index", {listTitle: day, newTodoItems: todoItems});
+	Item.find({}, (err, docs)=>{
+		if(err){
+			console.log(err);
+		} else if (docs.length === 0){
+			Item.insertMany([item1, item2, item3])
+			res.redirect("/");
+		} else {
+			res.render("index", {listTitle: day, newTodoItems: docs});
+		}
+	});
+});
+
+app.post("/delete", (req, res)=>{
+	const checkedBoxId = req.body.checkedbox;
+	Item.findOneAndRemove({_id: checkedBoxId}, (err)=>{
+		if(err){
+			console.log(err);
+		} else {
+			console.log("Successfully deleted the item.");
+		}
+	});
+	res.redirect("/")
 });
 
 app.get("/work", (req, res)=> {
