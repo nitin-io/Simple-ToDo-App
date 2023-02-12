@@ -9,6 +9,7 @@
       <input type="checkbox" name="checkedbox" value="<%= element._id %>" onchange="this.form.submit()"/>
       <p><%= element.todo %></p>
     </div>
+    <input type="hidden" name="listName" value="<%= listTitle %>"></input>
   </form>
   <% }) %>
 
